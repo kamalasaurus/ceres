@@ -89,7 +89,7 @@ export default (function(
             if(type.handler(key))
               e.addEventListener(key.substr(2), val, false)
             else
-              e[key] = val()
+              e.setAttribute(key, val())
           }
           else if(type.style(key))
           {

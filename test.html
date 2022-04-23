@@ -2,6 +2,8 @@
   import C from './ceres.js';
   window.C = C;
 
+  window.clickValue = ''
+
   const suite = [
     'identity',
     'default invocation',
@@ -31,7 +33,7 @@
     () => C('#goodbye'),
     () => C('a', { href: 'hello' }),
     () => C.svg('g', {x: 10, y: 10}),
-    () => C('div', [C('div'), C('span'), 'hello'], 'hello', {onclick: function() {}}),
+    () => C('div', [C('div'), C('span'), 'hello'], 'hello', {onclick: function() { window.clickValue = 'hello' }}),
     () => C('span', { style: 'color: blue' }),
     () => C('span', {style: { color: 'blue' }}),
     () => C.html('p', { attrs: { mysterious: 'mushroom'}}),
@@ -55,13 +57,11 @@
     (a) => a.tagName === document.createElement('a').tagName && (new URL(a.href)).pathname === '/hello',
     (a) => a.getAttribute('x') === '10' && a.getAttribute('y') === '10',
     (a) => {
-      const container = document.createElement('div')
-      container.appendChild(document.createElement('div'))
-      container.appendChild(document.createElement('span'))
-      container.appendChild(document.createTextNode('hello'))
-      container.appendChild(document.createTextNode('hello'))
-      container.addEventListener('click', function() {})
-
+      a.click()
+      return a.children.length === 2 &&
+        a.childNodes.length === 4 &&
+        a.textContent === 'hellohello' &&
+        window.clickValue === 'hello'
     },
     (a) => a.style['color'] === 'blue',
     (a) => a.style['color'] === 'blue',
@@ -76,7 +76,7 @@
       const q = tests[i]()
       const s = assertions[i](q)
 
-      if (i===9) debugger;
+      //if (i===1) debugger;
 
       console.assert(s, {test: i, slug: slug, received: q})
       if (s) console.log(`%ctest ${i} SUCCESS ${String.fromCodePoint(0x2705)} ${slug}`, 'color: lightgreen;')
