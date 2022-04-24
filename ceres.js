@@ -143,19 +143,19 @@ export default (function(
       return e
     }
 
-    C.html = (target, ...args) => {
+    C.html = (...n) => {
       NS = 'html'
-      return C(target, ...args)
+      return C(...n)
     }
 
-    C.svg = (target, ...args) => {
+    C.svg = (...n) => {
       NS = 'svg'
-      return C(target, ...args)
+      return C(...n)
     }
 
-    C.math = (target, ...args) => {
+    C.math = (...n) => {
       NS = 'math'
-      return C(target, ...args)
+      return C(...n)
     }
 
     if(!returnable(target)) {
