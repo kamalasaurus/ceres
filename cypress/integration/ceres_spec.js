@@ -1,11 +1,11 @@
 const append = (win, el) => win.document.body.appendChild(el)
 
-describe('ceres interface test', () => {
-  before(() => {
+describe('ceres interface test for', () => {
+  beforeEach(() => {
     cy.visit('/test.html')
   })
 
-  it('successfully loads', () => {
+  it('successful loading', () => {
     cy.window().its('C').should('be.a', 'function')
   })
 
@@ -112,7 +112,9 @@ describe('ceres interface test', () => {
 
       cy.get('div[data-bridge=\'10000\']').should('exist')
     })
+  })
 
+  context('adding children', () => {
     it('C([\'hello\']) creates a div with child \'hello\'', () => {
       cy.window().then((win) => {
         let el = win.C(['hello'])
@@ -120,6 +122,85 @@ describe('ceres interface test', () => {
       })
 
       cy.get('div').should('have.text', 'hello')
+    })
+
+    it(`C('nav', [C('button'), C('span'), 'hello'],
+      'hello', {onclick: function() { document.body.bgColor = 'blue' }})`, () => {
+        cy.window().then((win) => {
+          let el = win.C('nav', [win.C('button'), win.C('span'), 'hello'], 'hello', {
+            onclick: function() { win.document.body.bgColor = 'blue' }
+          })
+          append(win, el)
+        })
+
+        cy.get('nav').children().should('have.length', 2)
+        cy.get('nav').children('button').should('have.length', 1)
+        cy.get('nav').children('span').should('have.length', 1)
+        cy.get('nav').should('have.text', 'hellohello')
+        cy.get('nav').click()
+        cy.document().its('bgColor').should('equal', 'blue')
+    })
+  })
+
+  context('adding style', () => {
+    it('C(\'span\', \'hi\'{style: \'color: blue;\'}) creates a span with blue color style', () => {
+      cy.window().then((win) => {
+        let el = win.C('span', 'hi', {style: 'color: blue;'})
+        append(win, el)
+      })
+
+      cy.get('span').then(($el) => {
+        const color = $el[0].style.color
+        cy.wrap(color).should('equal', 'blue')
+      })
+    })
+
+    it('C(\'span\', \'hi\', {style: {color: red}}) creates a span with red color style', () => {
+      cy.window().then((win) => {
+        let el = win.C('span', 'hi', {style: {color: 'red'}})
+        append(win, el)
+      })
+
+      cy.get('span').then(($el) => {
+        const color = $el[0].style.color
+        cy.wrap(color).should('equal', 'red')
+      })
+    })
+  })
+
+  context('handling dynamic content', () => {
+    it('C(\'div\', () => Date.now()) prints a numeric string', () => {
+      cy.window().then((win) => {
+        let el = win.C('div', () => Date.now())
+        append(win, el)
+      })
+
+      cy.get('div').then(($el) => {
+        cy.wrap($el).invoke('text').should('match', /^[0-9]*$/)
+      })
+    })
+
+
+    it('C(Date.now) prints a numeric string', () => {
+      cy.window().then((win) => {
+        let el = win.C(Date.now)
+        append(win, el)
+      })
+
+      cy.get('div').then(($el) => {
+        cy.wrap($el).invoke('text').should('match', /^[0-9]*$/)
+      })
+    })
+
+    it('C(\'section\', Date.now()) prints a numeric string', () => {
+      cy.window().then((win) => {
+        let el = win.C('section', Date.now())
+        append(win, el)
+      })
+
+      cy.get('section').then(($el) => {
+        cy.wrap($el).invoke('text').should('match', /^[0-9]*$/)
+      })
     })
   })
 })
