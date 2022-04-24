@@ -2,10 +2,9 @@ export default (function(
   { Boolean, Date, RegExp, Array, Node, document } = window
 ) {
   let __init = false
+  let NS = 'html'
 
   return new function C(target, ...args) {
-    let NS = ''
-
     const ns = {
       html: 'http://www.w3.org/1999/xhtml',
       svg: 'http://www.w3.org/2000/svg',
@@ -30,7 +29,16 @@ export default (function(
       attrs: (t) => 'attrs' === t,
       data: (t) => "data-" === t.substr(0,5),
       class: (t) => '.' === t[0],
-      id: (t) => '#' === t[0]
+      id: (t) => '#' === t[0],
+      undef: (t) => 'undefined' === typeof t,
+      null: (t) => null === t
+    }
+
+    const returnable = (t) => {
+      return type.string(t) ||
+        type.node(t) ||
+        type.undef(t) ||
+        type.null(t)
     }
 
     const parse = (tag = '') => {
@@ -38,14 +46,21 @@ export default (function(
         .split(/([\.#]?[^\s#.]+)/)
         .filter(Boolean)
         .reduce((a, b, i) => {
-          const el = (0 === i && !type.selector(b)) ?
-            document.createElementNS(ns[NS], b) :
-            a;
+          try
+          {
+            const el = (0 === i && !type.selector(b)) ?
+              document.createElementNS(ns[NS], b) :
+              a;
 
-          if(type.class(b)) el.classList.add(b.substr(1))
-          if(type.id(b)) el.setAttribute('id', b.substr(1))
+            if(type.class(b)) el.classList.add(b.substr(1))
+            if(type.id(b)) el.setAttribute('id', b.substr(1))
 
-          return el
+            return el
+          }
+          catch(e)
+          {
+            return a
+          }
         }, defaultElement())
     }
 
@@ -130,20 +145,26 @@ export default (function(
 
     C.html = (target, ...args) => {
       NS = 'html'
-      return args.reduce(snowball, initialize(target))
+      return C(target, ...args)
     }
 
     C.svg = (target, ...args) => {
       NS = 'svg'
-      return args.reduce(snowball, initialize(target))
+      return C(target, ...args)
     }
 
     C.math = (target, ...args) => {
       NS = 'math'
-      return args.reduce(snowball, initialize(target))
+      return C(target, ...args)
     }
 
-    return C.html(target, ...args)
+    if(!returnable(target)) {
+      args.unshift(target)
+      target = undefined
+    }
+
+    const e = args.reduce(snowball, initialize(target))
+    NS = 'html'
+    return e
   }
 })(window);
-
