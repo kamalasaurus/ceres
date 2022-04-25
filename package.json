@@ -4,10 +4,11 @@
   "description": "a small and icy frontend moon hiding amongst the asteroids",
   "main": "ceres.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "static-server",
-    "lint": "eslint",
-    "cypress:open": "cypress open"
+    "serve": "http-server -c-1 --silent &",
+    "cypress:open": "cypress open",
+    "pretest": "npm run serve",
+    "test": "cypress run",
+    "posttest": "kill $(lsof -t -i:8080)"
   },
   "repository": {
     "type": "git",
@@ -26,6 +27,6 @@
   "homepage": "https://github.com/kamalasaurus/ceres#readme",
   "devDependencies": {
     "cypress": "^9.5.4",
-    "static-server": "^2.2.1"
+    "http-server": "^14.1.0"
   }
 }

@@ -2,7 +2,7 @@ const append = (win, el) => win.document.body.appendChild(el)
 
 describe('ceres interface test for', () => {
   beforeEach(() => {
-    cy.visit('/test.html')
+    cy.visit('/')
   })
 
   it('successful loading', () => {
