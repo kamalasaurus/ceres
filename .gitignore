@@ -1,7 +1,8 @@
 node_modules/
 artifacts/
 sauce-app-payload*
+cypress/videos/
+cypress/fixtures/
 cypress/plugins/
 cypress/support/
-cypress/videos/
-
+cypress/screenshots/
