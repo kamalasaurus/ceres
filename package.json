@@ -5,9 +5,9 @@
   "main": "ceres.js",
   "scripts": {
     "serve": "http-server -c-1 --silent &",
-    "cypress:open": "cypress open",
+    "cypress:open": "CYPRESS_BASE_URL='http://localhost:8080' cypress open",
     "pretest": "npm run serve",
-    "test": "cypress run",
+    "test": "CYPRESS_BASE_URL='http://localhost:8080' cypress run",
     "posttest": "kill $(lsof -t -i:8080)"
   },
   "repository": {
