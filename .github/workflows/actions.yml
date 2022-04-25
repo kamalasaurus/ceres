@@ -37,5 +37,5 @@ jobs:
 
       - name: Cypress
         run: |
-          saucectl run
+          CYPRESS_BASE_URL='' saucectl run
 

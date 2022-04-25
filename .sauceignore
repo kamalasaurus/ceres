@@ -13,6 +13,5 @@ node_modules/
 .idea/
 .gitignore
 .hgignore
-.gitlab-ci.yml
 .npmrc
 *.gif

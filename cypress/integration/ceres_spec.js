@@ -2,8 +2,7 @@ const append = (win, el) => win.document.body.appendChild(el)
 
 describe('ceres interface test for', () => {
   beforeEach(() => {
-    cy.visit('/')
-    cy.wait(5000)
+    cy.visit('/index.html')
   })
 
   it('successful loading', () => {
