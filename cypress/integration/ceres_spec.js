@@ -5,6 +5,10 @@ describe('ceres interface test for', () => {
     cy.visit('/index.html')
   })
 
+  //after(() => {
+  //  console.log(process.env)
+  //})
+
   it('successful loading', () => {
     cy.window().its('C').should('be.a', 'function')
   })
