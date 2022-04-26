@@ -43,14 +43,14 @@ jobs:
     needs: cypress
     if: success()
     env:
-      SAUCE_URL: ${{format('https://saucelabs.com/rest/v1/{0}/jobs/{1}', SAUCE_USERNAME, GITHUB_RUN_ID)}}
+      SAUCE_URL: ${{format('https://saucelabs.com/rest/v1/{0}/jobs/{1}', env.SAUCE_USERNAME, env.GITHUB_RUN_ID)}}
     steps:
       - name: Send Success to Sauce
         run: |
           curl \
           PUT -X \
-          -u SAUCE_USERNAME:SAUCE_ACCESS_KEY \
-          SAUCE_URL \
+          -u env.SAUCE_USERNAME:env.SAUCE_ACCESS_KEY \
+          env.SAUCE_URL \
           --header 'Content-Type: application/json' \
           --data-raw \'{"data": { "passed": "true" }}'
   report_failure:
@@ -58,13 +58,13 @@ jobs:
     needs: cypress
     if: failure()
     env:
-      SAUCE_URL: ${{format('https://saucelabs.com/rest/v1/{0}/jobs/{1}', SAUCE_USERNAME, GITHUB_RUN_ID)}}
+      SAUCE_URL: ${{format('https://saucelabs.com/rest/v1/{0}/jobs/{1}', env.SAUCE_USERNAME, env.GITHUB_RUN_ID)}}
     steps:
         - name: Send Failure to Sauce
           run: |
             curl \
             PUT -X \
-            -u SAUCE_USERNAME:SAUCE_ACCESS_KEY \
-            SAUCE_URL \
+            -u env.SAUCE_USERNAME:env.SAUCE_ACCESS_KEY \
+            env.SAUCE_URL \
             --header 'Content-Type: application/json' \
             --data-raw \'{"data": { "passed": "false" }}'
