@@ -38,6 +38,10 @@ jobs:
       - name: Cypress
         run: |
           saucectl run
+
+      - name: print env
+        run: env
+
   report_success:
     runs-on: ubuntu-latest
     needs: cypress
@@ -50,7 +54,7 @@ jobs:
           -u "$SAUCE_USERNAME:$SAUCE_ACCESS_KEY" \
           "https://saucelabs.com/rest/v1/$SAUCE_USERNAME/jobs/$JOB_ID" \
           --header 'Content-Type: application/json' \
-          --data-raw \'{"data": { "passed": "true" }}'
+          --data-raw '{"data": { "passed": "true" }}'
   report_failure:
     runs-on: ubuntu-latest
     needs: cypress
@@ -63,4 +67,4 @@ jobs:
             -u "$SAUCE_USERNAME:$SAUCE_ACCESS_KEY" \
             "https://saucelabs.com/rest/v1/$SAUCE_USERNAME/jobs/$JOB_ID" \
             --header 'Content-Type: application/json' \
-            --data-raw \'{"data": { "passed": "false" }}'
+            --data-raw '{"data": { "passed": "false" }}'
