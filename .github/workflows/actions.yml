@@ -38,4 +38,31 @@ jobs:
       - name: Cypress
         run: |
           saucectl run
-
+  report_success:
+    runs-on: ubuntu-latest
+    needs: cypress
+    if: success()
+    steps:
+      - name: Send Success to Sauce
+        run: |
+          curl \
+          PUT -X \
+          -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY \
+          \'https://saucelabs.com/rest/v1/USERNAME/jobs/JOB_ID' \
+          --header 'Content-Type: application/json' \
+          --data-raw \'{"data": { "passed": "true" }}'
+  report_failure:
+    runs-on: ubuntu-latest
+    needs: cypress
+    if: failure()
+    steps:
+        - name: Send Failure to Sauce
+          env:
+            URL: ${{format('https://saucelabs.com/rest/v1/{0}/jobs/{1}', $SAUCE_USERNAME, $GITHUB_RUN_ID)}}
+          run: |
+            curl \
+            PUT -X \
+            -u $SAUCE_USERNAME:$SAUCE_ACCESS_KEY \
+            $URL \
+            --header 'Content-Type: application/json' \
+            --data-raw \'{"data": { "passed": "false" }}'
